@@ -21,6 +21,7 @@ Bootstrap(app)
 
 ##EMAIL DETAILS
 my_email = "florin.test12@gmail.com"
+password = os.environ.get("PASSWORD")
 email ="florin.ciortan@hotmail.com"
 
 ##CONNECT TO DB
@@ -165,7 +166,7 @@ def contact():
         print(msg)
         with smtplib.SMTP("smtp.gmail.com") as connection:
             connection.starttls()
-            connection.login(user=my_email, password=os.environ.get("PASSWORD"))
+            connection.login(user=my_email, password=password)
             connection.sendmail(
                 from_addr=my_email,
                 to_addrs=email,
