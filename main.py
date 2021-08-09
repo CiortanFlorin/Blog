@@ -164,6 +164,7 @@ def contact():
         data = request.form
         msg = f'Name: {data["name"]}\nE-mail: {data["email"]}\nPhone: {data["phone"]}\nMessage: {data["message"]}'
         print(msg)
+        print(password)
         with smtplib.SMTP("smtp.gmail.com") as connection:
             connection.starttls()
             connection.login(user=my_email, password=password)
