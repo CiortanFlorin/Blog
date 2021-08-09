@@ -1,4 +1,4 @@
-from flask import Flask, render_template, redirect, url_for, flash, abort
+from flask import Flask, render_template, redirect, url_for, flash, abort, request
 from flask_bootstrap import Bootstrap
 from flask_ckeditor import CKEditor
 from datetime import date
@@ -11,11 +11,17 @@ from forms import CreatePostForm, CreateUser, LoginUser, CommentForm
 from flask_gravatar import Gravatar
 from functools import wraps
 import os
+import smtplib
+import requests
 
 app = Flask(__name__)
 app.config['SECRET_KEY'] = os.environ.get("SECRET_KEY")
 ckeditor = CKEditor(app)
 Bootstrap(app)
+
+##EMAIL DETAILS
+my_email = "florin.test12@gmail.com"
+email ="florin.ciortan@hotmail.com"
 
 ##CONNECT TO DB
 app.config['SQLALCHEMY_DATABASE_URI'] = os.environ.get("DATABASE_URL", "sqlite:///blog.db")
@@ -151,8 +157,20 @@ def about():
     return render_template("about.html", current_user=current_user)
 
 
-@app.route("/contact")
+@app.route("/contact", methods=["GET", "POST"])
 def contact():
+    if request.method == "POST":
+        data = request.form
+        msg = f'Name: {data["name"]}\nE-mail: {data["email"]}\nPhone: {data["phone"]}\nMessage: {data["message"]}'
+        print(msg)
+        with smtplib.SMTP("smtp.gmail.com") as connection:
+            connection.starttls()
+            connection.login(user=my_email, password=os.environ.get("PASSWORD"))
+            connection.sendmail(
+                from_addr=my_email,
+                to_addrs=email,
+                msg=f"Subject: NEW CONTACT\n\n{msg}")
+        return redirect(url_for("get_all_posts"))
     return render_template("contact.html", current_user=current_user)
 
 
