@@ -16,6 +16,7 @@ import requests
 
 app = Flask(__name__)
 app.config['SECRET_KEY'] = os.environ.get("SECRET_KEY")
+
 ckeditor = CKEditor(app)
 Bootstrap(app)
 
@@ -87,9 +88,12 @@ def admin_only(f):
         return f(*args, ** kwargs)
     return decorated_function
 
+ROWS_PER_PAGE = 5
+
 @app.route('/')
 def get_all_posts():
-    posts = BlogPost.query.all()
+    page = request.args.get('page', 1, type=int)
+    posts = BlogPost.query.paginate(page=page, per_page=ROWS_PER_PAGE)
     return render_template("index.html", all_posts=posts)
 
 
